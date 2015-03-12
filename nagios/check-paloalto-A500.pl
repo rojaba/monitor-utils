@@ -51,6 +51,29 @@ my $s_pa_total_active_sessions = '.1.3.6.1.4.1.25461.2.1.2.3.3.0';
 my $s_pa_total_tcp_active_sessions = '.1.3.6.1.4.1.25461.2.1.2.3.4.0';
 my $s_pa_total_udp_active_sessions = '.1.3.6.1.4.1.25461.2.1.2.3.5.0';
 my $s_pa_total_icmp_active_sessions = '.1.3.6.1.4.1.25461.2.1.2.3.6.0';
+my $s_interface_ha1 = '.1.3.6.1.2.1.2.2.1.8.1';
+my $s_interface_mgmt = '.1.3.6.1.2.1.2.2.1.8.2';
+my $s_interface_1 = '.1.3.6.1.2.1.2.2.1.8.3';
+my $s_interface_2 = '1.3.6.1.2.1.2.2.1.8.4';
+my $s_interface_3 = '.1.3.6.1.2.1.2.2.1.8.5';
+my $s_interface_4 = '.1.3.6.1.2.1.2.2.1.8.6';
+my $s_interface_5 = '.1.3.6.1.2.1.2.2.1.8.7';
+my $s_interface_6 = '.1.3.6.1.2.1.2.2.1.8.8';
+my $s_interface_7 = '.1.3.6.1.2.1.2.2.1.8.9';
+my $s_interface_8 = '.1.3.6.1.2.1.2.2.1.8.10';
+my $s_interface_9 = '.1.3.6.1.2.1.2.2.1.8.11';
+my $s_interface_10 = '.1.3.6.1.2.1.2.2.1.8.12';
+my $s_interface_11 = '.1.3.6.1.2.1.2.2.1.8.13';
+my $s_interface_12 = '.1.3.6.1.2.1.2.2.1.8.14';
+my $s_interface_13 = '.1.3.6.1.2.1.2.2.1.8.15';
+my $s_interface_14 = '.1.3.6.1.2.1.2.2.1.8.16';
+my $s_interface_15 = '.1.3.6.1.2.1.2.2.1.8.17';
+my $s_interface_16 = '.1.3.6.1.2.1.2.2.1.8.18';
+my $s_interface_17 = '.1.3.6.1.2.1.2.2.1.8.19';
+my $s_interface_18 = '.1.3.6.1.2.1.2.2.1.8.20';
+my $s_interface_19 = '.1.3.6.1.2.1.2.2.1.8.21';
+my $s_interface_20 = '.1.3.6.1.2.1.2.2.1.8.22';
+
 
 ### Functions
 ###############
@@ -67,7 +90,7 @@ sub _create_session {
 
 sub FSyntaxError {
     print "Syntax Error !\n";
-# print "$0 -H [ip|dnsname] -C [snmp community] -t [temp|fan|ps|cpu|mem|module|freeint|firmware|ha|model|sessions|udp_sessions|tcp_sessions|icmp_sessions] -w [warning value] -c [critical value] -d [days]\n";
+# print "$0 -H [ip|dnsname] -C [snmp community] -t [temp|fan|ps|cpu|mem|module|freeint|interface|firmware|ha|model|sessions|udp_sessions|tcp_sessions|icmp_sessions] -w [warning value] -c [critical value] -d [days]\n -i interface";
     print "$script_name\n";
     print "Version : $script_version\n";
     print "-H = Ip/Dns Name of the FW\n";
@@ -75,10 +98,11 @@ sub FSyntaxError {
     print "-t = Check type (currently only cpu/firmware/model/ha/sessions/icmp_sesions/tcp_sessions/udp_sessions)\n";
     print "-w = Warning Value\n";
     print "-c = Critical Value\n";
+    print "-i = Interface Number/ha1/mgmt\n";
     exit(3);
 }
 
-if($#ARGV != 9) {
+if($#ARGV != 11) {
     FSyntaxError;
 }
 
@@ -89,6 +113,7 @@ my $community;
 my $check_type;
 my $warn = 0;
 my $crit = 0;
+my $ethernet;
 my $int;
 
 while(@ARGV) {
@@ -102,8 +127,10 @@ while(@ARGV) {
     } elsif("$temp" eq '-w') {
 	$warn = shift(@ARGV);
     } elsif("$temp" eq '-c') {
-	$crit = shift(@ARGV);
-    } else {
+           $crit = shift(@ARGV);
+    } elsif("$temp" eq '-i') {
+	$ethernet = shift(@ARGV);
+	}	else {
 	FSyntaxError();
     }
 }
@@ -127,6 +154,73 @@ if($check_type eq "model") {
     $msg = "OK: Palo Alto  $palo_model";
     $perf="";
     $stat = 0;
+}
+### Interface Status ###
+elsif($check_type eq "interface") {
+
+	my $interface_check = 0;
+	
+    if("$ethernet" == 1) {
+	$interface_check = $s_interface_1;
+    } elsif("$ethernet" == 2) {
+	$interface_check = $s_interface_2;
+    } elsif("$ethernet" == 3) {
+	$interface_check = $s_interface_3;
+	} elsif("$ethernet" == 4) {
+	$interface_check = $s_interface_4;
+	} elsif("$ethernet" == 5) {
+	$interface_check = $s_interface_5;
+	} elsif("$ethernet" == 6) {
+	$interface_check = $s_interface_6;
+	} elsif("$ethernet" == 7) {
+	$interface_check = $s_interface_7;
+	} elsif("$ethernet" == 8) {
+	$interface_check = $s_interface_8;
+	} elsif("$ethernet" == 9) {
+	$interface_check = $s_interface_9;
+	} elsif("$ethernet" == 10) {
+	$interface_check = $s_interface_10;
+	} elsif("$ethernet" == 11) {
+	$interface_check = $s_interface_11;
+	} elsif("$ethernet" == 12) {
+	$interface_check = $s_interface_12;
+	} elsif("$ethernet" == 13) {
+	$interface_check = $s_interface_13;
+	} elsif("$ethernet" == 14) {
+	$interface_check = $s_interface_14;
+	} elsif("$ethernet" == 15) {
+	$interface_check = $s_interface_15;
+	} elsif("$ethernet" == 16) {
+	$interface_check = $s_interface_16;
+	} elsif("$ethernet" == 17) {
+	$interface_check = $s_interface_17;
+	} elsif("$ethernet" == 18) {
+	$interface_check = $s_interface_18;
+	} elsif("$ethernet" == 19) {
+	$interface_check = $s_interface_19;
+	} elsif("$ethernet" == 20) {
+	$interface_check = $s_interface_20;
+	} elsif("$ethernet" eq 'ha1') {
+	$interface_check = $s_interface_ha1;
+	} elsif("$ethernet" eq "mgmt") {
+	$interface_check = $s_interface_mgmt;
+}
+
+    my $R_firm = $snmp_session->get_request(-varbindlist => [$interface_check]);
+	my $interface = "$R_firm->{$interface_check}";
+
+	
+	if($interface == 1) {
+	$msg =  "OK: Interface e1/$ethernet is UP\n";
+	$stat = 0;
+    } elsif($interface == 2) {
+	$msg =  "CRITICAL: Interface $ethernet is DOWN\n";
+	$stat = 2;
+    };
+	
+    $perf="";
+    $stat = 0;
+
 }
 
 ### HA MODE ###
